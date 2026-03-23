@@ -22,3 +22,4 @@ Abre https://axelmarroquinn.github.io/sistema-biblioteca/
 
 ## Tecnologías
 HTML · CSS · JavaScript
+Gracias Claude!
