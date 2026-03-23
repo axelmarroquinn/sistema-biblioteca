@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BiblioSystem 📕</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-title">Biblio<i>System</i></div>
+      <div class="logo-sub">Bib. Universitaria</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" onclick="navigate('libros')">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Libros</span>
+        <span class="nav-badge" id="badge-libros">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('usuarios')">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Usuarios</span>
+        <span class="nav-badge" id="badge-usuarios">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('prestamos')">
+        <span class="nav-icon">🔖</span>
+        <span class="nav-label">Préstamos</span>
+        <span class="nav-badge" id="badge-prestamos">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('reportes')">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Reportes</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">v1.0 · localStorage</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="global-search" placeholder="Buscar libro, usuario..." oninput="globalSearch(this.value)"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="section active" id="section-dashboard">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-libros">0</div>
+            <div class="stat-label">Libros Registrados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-usuarios">0</div>
+            <div class="stat-label">Usuarios Activos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-prestamos">0</div>
+            <div class="stat-label">Préstamos Activos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-vencidos">0</div>
+            <div class="stat-label">Vencidos / Alertas</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">⚠️ Préstamos con alerta de devolución</span>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table id="tbl-alertas">
+                <thead><tr>
+                  <th>Libro</th><th>Usuario</th><th>Fecha Límite</th><th>Estado</th>
+                </tr></thead>
+                <tbody id="tbody-alertas"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">📚 Últimos libros agregados</span>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table id="tbl-ultimos">
+                <thead><tr>
+                  <th>Código</th><th>Título</th><th>Autor</th><th>Categoría</th><th>Disponibilidad</th>
+                </tr></thead>
+                <tbody id="tbody-ultimos"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── LIBROS ── -->
+      <div class="section" id="section-libros">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Registrar nuevo libro</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-grid cols-3">
+              <div class="form-group">
+                <label>Código</label>
+                <input type="text" id="libro-codigo" placeholder="LIB-001"/>
+              </div>
+              <div class="form-group" style="grid-column: span 2">
+                <label>Título</label>
+                <input type="text" id="libro-titulo" placeholder="Título del libro"/>
+              </div>
+              <div class="form-group">
+                <label>Autor</label>
+                <input type="text" id="libro-autor" placeholder="Nombre del autor"/>
+              </div>
+              <div class="form-group">
+                <label>Categoría</label>
+                <select id="libro-categoria">
+                  <option value="">Seleccionar...</option>
+                  <option>Ciencias</option>
+                  <option>Ingeniería</option>
+                  <option>Matemáticas</option>
+                  <option>Literatura</option>
+                  <option>Historia</option>
+                  <option>Filosofía</option>
+                  <option>Derecho</option>
+                  <option>Medicina</option>
+                  <option>Arte</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Año de publicación</label>
+                <input type="number" id="libro-anio" placeholder="2024" min="1800" max="2099"/>
+              </div>
+              <div class="form-group">
+                <label>Cantidad de ejemplares</label>
+                <input type="number" id="libro-cantidad" placeholder="1" min="1" value="1"/>
+              </div>
+            </div>
+            <div style="margin-top:16px">
+              <button class="btn btn-primary" onclick="registrarLibro()">＋ Registrar libro</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Inventario de libros</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="filtro-libros" placeholder="Filtrar..." oninput="renderTablaLibros()" style="padding:6px 10px;font-size:12px;width:180px"/>
+              <select id="filtro-cat-libros" onchange="renderTablaLibros()" style="padding:6px 10px;font-size:12px;">
+                <option value="">Todas las categorías</option>
+                <option>Ciencias</option><option>Ingeniería</option><option>Matemáticas</option>
+                <option>Literatura</option><option>Historia</option><option>Filosofía</option>
+                <option>Derecho</option><option>Medicina</option><option>Arte</option><option>Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>Código</th><th>Título</th><th>Autor</th><th>Categoría</th><th>Año</th><th>Disponibles</th><th>Total</th><th>Acciones</th>
+                </tr></thead>
+                <tbody id="tbody-libros"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── USUARIOS ── -->
+      <div class="section" id="section-usuarios">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Registrar nuevo usuario</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Carné / ID</label>
+                <input type="text" id="usuario-id" placeholder="0900-23-0001"/>
+              </div>
+              <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" id="usuario-nombre" placeholder="Nombre y apellido"/>
+              </div>
+              <div class="form-group">
+                <label>Correo electrónico</label>
+                <input type="email" id="usuario-email" placeholder="correo@universidad.gt"/>
+              </div>
+              <div class="form-group">
+                <label>Tipo de usuario</label>
+                <select id="usuario-tipo">
+                  <option value="">Seleccionar...</option>
+                  <option>Estudiante</option>
+                  <option>Docente</option>
+                  <option>Administrativo</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Carrera / Departamento</label>
+                <input type="text" id="usuario-carrera" placeholder="Ingeniería en Sistemas"/>
+              </div>
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" id="usuario-telefono" placeholder="5555-5555"/>
+              </div>
+            </div>
+            <div style="margin-top:16px">
+              <button class="btn btn-primary" onclick="registrarUsuario()">＋ Registrar usuario</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Listado de usuarios</span>
+            <input type="text" id="filtro-usuarios" placeholder="Filtrar..." oninput="renderTablaUsuarios()" style="padding:6px 10px;font-size:12px;width:200px"/>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>Carné/ID</th><th>Nombre</th><th>Tipo</th><th>Carrera/Depto.</th><th>Email</th><th>Teléfono</th><th>Préstamos activos</th><th>Acciones</th>
+                </tr></thead>
+                <tbody id="tbody-usuarios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PRÉSTAMOS ── -->
+      <div class="section" id="section-prestamos">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Registrar préstamo</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Usuario</label>
+                <select id="prestamo-usuario">
+                  <option value="">Seleccionar usuario...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Libro</label>
+                <select id="prestamo-libro">
+                  <option value="">Seleccionar libro disponible...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Fecha de préstamo</label>
+                <input type="date" id="prestamo-fecha-inicio"/>
+              </div>
+              <div class="form-group">
+                <label>Fecha límite de devolución</label>
+                <input type="date" id="prestamo-fecha-limite"/>
+              </div>
+              <div class="form-group full">
+                <label>Observaciones</label>
+                <textarea id="prestamo-obs" placeholder="Notas adicionales..."></textarea>
+              </div>
+            </div>
+            <div style="margin-top:16px">
+              <button class="btn btn-primary" onclick="registrarPrestamo()">🔖 Registrar préstamo</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Historial de préstamos</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="filtro-prestamos" placeholder="Filtrar..." oninput="renderTablaPrestamos()" style="padding:6px 10px;font-size:12px;width:180px"/>
+              <select id="filtro-estado-prestamo" onchange="renderTablaPrestamos()" style="padding:6px 10px;font-size:12px;">
+                <option value="">Todos</option>
+                <option value="Activo">Activos</option>
+                <option value="Devuelto">Devueltos</option>
+                <option value="Vencido">Vencidos</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>#</th><th>Usuario</th><th>Libro</th><th>Fecha préstamo</th><th>Fecha límite</th><th>Devolución</th><th>Estado</th><th>Acciones</th>
+                </tr></thead>
+                <tbody id="tbody-prestamos"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── REPORTES ── -->
+      <div class="section" id="section-reportes">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-value" id="rep-total-prestamos">0</div>
+            <div class="stat-label">Total préstamos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="rep-devueltos">0</div>
+            <div class="stat-label">Devueltos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="rep-activos">0</div>
+            <div class="stat-label">Activos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="rep-vencidos">0</div>
+            <div class="stat-label">Vencidos</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="panel">
+            <div class="panel-header"><span class="panel-title">Libros más prestados</span></div>
+            <div class="panel-body">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Título</th><th>Préstamos</th></tr></thead>
+                  <tbody id="tbody-top-libros"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><span class="panel-title">Usuarios con más préstamos</span></div>
+            <div class="panel-body">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Usuario</th><th>Tipo</th><th>Préstamos</th></tr></thead>
+                  <tbody id="tbody-top-usuarios"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:20px">
+          <div class="panel-header">
+            <span class="panel-title">Libros sin disponibilidad</span>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Código</th><th>Título</th><th>Autor</th><th>Total ejemplares</th></tr></thead>
+                <tbody id="tbody-sin-stock"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;gap:12px">
+          <button class="btn btn-secondary" onclick="exportarCSV()">⬇ Exportar préstamos CSV</button>
+          <button class="btn btn-danger btn-sm" onclick="limpiarDatos()" style="margin-left:auto">🗑 Limpiar todos los datos</button>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- MODAL DETALLE PRESTAMO -->
+<div class="modal-overlay" id="modal-detalle">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Detalle del préstamo</span>
+      <button class="modal-close" onclick="cerrarModal('modal-detalle')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-detalle-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="cerrarModal('modal-detalle')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
